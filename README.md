@@ -42,8 +42,10 @@ The system is designed to provide grounded answers, reduce hallucination, and de
   - Full ingestion mode
   - Local caching to avoid unnecessary reprocessing of unchanged files
 
+---
 🔗 Live Demo: https://your-app-url.streamlit.app
 ---
+
   ## Architecture
 
 ### Upload Mode (Local RAG Pipeline)
