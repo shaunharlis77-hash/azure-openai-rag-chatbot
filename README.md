@@ -174,3 +174,9 @@ Create a `.env` file and add:
 ### 6. Run the app
 
     streamlit run streamlit_app.py
+
+---
+
+# AI Document Intelligence Chatbot
+
+![App Preview](screenshots/app-preview.png)
