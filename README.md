@@ -179,4 +179,4 @@ Create a `.env` file and add:
 
 # AI Document Intelligence Chatbot
 
-![App Preview](screenshots/app-preview.png)
+![App Preview](screenshots/app_preview.png)
