@@ -12,9 +12,9 @@ This project demonstrates two complementary approaches to grounded document Q&A:
 
 The system is designed to provide grounded answers, reduce hallucination, and demonstrate both core RAG fundamentals and cloud-based enterprise architecture.
 
----
+
 🔗 Live Demo: https://ai-document-intelligence-chatbot.streamlit.app/
----
+
 
 ## Features
 
