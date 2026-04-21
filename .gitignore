@@ -1,0 +1,9 @@
+venv/
+__pycache__/
+*.pyc
+.env
+data/chunks.json
+data/ingestion_cache.json
+pdfs/*.pdf
+.DS_Store
+.streamlit/secrets.toml
