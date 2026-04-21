@@ -41,7 +41,6 @@ The system is designed to provide grounded answers, reduce hallucination, and de
   - Fast test mode using first-N-page processing
   - Full ingestion mode
   - Local caching to avoid unnecessary reprocessing of unchanged files
-
 ---
 🔗 Live Demo: https://your-app-url.streamlit.app
 ---
