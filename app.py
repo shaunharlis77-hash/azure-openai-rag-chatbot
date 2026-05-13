@@ -1,47 +1,17 @@
 import os
-import json
-import re
-import fitz  # PyMuPDF
-import streamlit as st
-from openai import OpenAI
-from azure.storage.blob import BlobServiceClient
-from azure.core.credentials import AzureKeyCredential
-from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.search.documents import SearchClient
-from azure.search.documents.indexes import SearchIndexClient
 from pathlib import Path
-from textwrap import dedent
-from src.embeddings import get_embedding, cosine_similarity
+
+import streamlit as st
+
 from src.answer_generation import generate_answer
-from src.cache import load_ingestion_cache, save_ingestion_cache
-from src.local_retrieval import keyword_search
-from src.azure_storage import list_blobs_in_container, download_blob_to_bytes
-from src.azure_search import ensure_search_index_exists, upload_chunks_to_search, search_azure_index
-from azure.search.documents.indexes.models import (
-    SearchIndex,
-    SimpleField,
-    SearchField,
-    SearchFieldDataType,
-    VectorSearch,
-    VectorSearchProfile,
-    HnswAlgorithmConfiguration
-)
-from azure.search.documents.models import VectorizedQuery
-from src.config import *
-from src.document_processing import (
-    get_document_intelligence_client,
-    extract_text_from_pdf,
-    extract_text_from_pdf_bytes,
-    extract_text_with_document_intelligence,
-    chunk_text,
-)
 from src.ingestion import (
     PDF_FOLDER,
     OUTPUT_FILE,
     load_chunks_from_json,
     process_pdfs,
-    process_pdfs_from_azure,
 )
+from src.local_retrieval import keyword_search
+from src.azure_search import search_azure_index
 from ui.styles import load_custom_styles
 
 
