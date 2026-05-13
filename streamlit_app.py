@@ -3,13 +3,13 @@ import json
 import re
 import fitz  # PyMuPDF
 import streamlit as st
-from dotenv import load_dotenv
 from openai import OpenAI
 from azure.storage.blob import BlobServiceClient
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
+from src.embeddings import get_embedding, cosine_similarity
 from azure.search.documents.indexes.models import (
     SearchIndex,
     SimpleField,
@@ -35,21 +35,6 @@ DATA_FOLDER = "data"
 OUTPUT_FILE = os.path.join(DATA_FOLDER, "chunks.json")
 INGESTION_CACHE_FILE = os.path.join(DATA_FOLDER, "ingestion_cache.json")
 
-load_dotenv()
-
-client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"))
-OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-4o-mini")
-OPENAI_EMBEDDING_MODEL = os.getenv("OPENAI_EMBEDDING_MODEL", "text-embedding-3-small")
-
-AZURE_STORAGE_CONNECTION_STRING = os.getenv("AZURE_STORAGE_CONNECTION_STRING")
-AZURE_STORAGE_CONTAINER = os.getenv("AZURE_STORAGE_CONTAINER", "documents")
-
-AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT")
-AZURE_DOCUMENT_INTELLIGENCE_KEY = os.getenv("AZURE_DOCUMENT_INTELLIGENCE_KEY")
-
-AZURE_SEARCH_ENDPOINT = os.getenv("AZURE_SEARCH_ENDPOINT")
-AZURE_SEARCH_KEY = os.getenv("AZURE_SEARCH_KEY")
-AZURE_SEARCH_INDEX_NAME = os.getenv("AZURE_SEARCH_INDEX_NAME", "rag-chunks")
 
 os.makedirs(PDF_FOLDER, exist_ok=True)
 os.makedirs(DATA_FOLDER, exist_ok=True)
@@ -279,9 +264,6 @@ def search_azure_index(query, top_k=5):
         return []
 
 
-
-
-
 def save_chunks_to_json(all_chunks, output_file):
     with open(output_file, "w", encoding="utf-8") as file:
         json.dump(all_chunks, file, indent=4, ensure_ascii=False)
@@ -379,30 +361,6 @@ Question:
     except Exception as e:
         return f"OpenAI error: {e}"
     
-
-def get_embedding(text):
-    try:
-        response = client.embeddings.create(
-            model=OPENAI_EMBEDDING_MODEL,
-            input=text
-        )
-        return response.data[0].embedding
-
-    except Exception as e:
-        st.error(f"Embedding error: {e}")
-        return None    
-
-
-def cosine_similarity(vec1, vec2):
-    dot_product = sum(a * b for a, b in zip(vec1, vec2))
-    norm_vec1 = sum(a * a for a in vec1) ** 0.5
-    norm_vec2 = sum(b * b for b in vec2) ** 0.5
-
-    if norm_vec1 == 0 or norm_vec2 == 0:
-        return 0
-
-    return dot_product / (norm_vec1 * norm_vec2)
-
 
 def process_pdfs(pages_to_process=None, pages_param=None, selected_files=None):
     cache = load_ingestion_cache()
