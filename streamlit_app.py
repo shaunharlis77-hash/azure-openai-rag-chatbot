@@ -20,6 +20,7 @@ from azure.search.documents.indexes.models import (
     HnswAlgorithmConfiguration
 )
 from azure.search.documents.models import VectorizedQuery
+from src.config import *
 
 
 PDF_FOLDER = "pdfs"
