@@ -10,6 +10,7 @@ from azure.ai.documentintelligence import DocumentIntelligenceClient
 from azure.search.documents import SearchClient
 from azure.search.documents.indexes import SearchIndexClient
 from src.embeddings import get_embedding, cosine_similarity
+from src.answer_generation import generate_answer
 from azure.search.documents.indexes.models import (
     SearchIndex,
     SimpleField,
@@ -94,10 +95,7 @@ def download_blob_to_bytes(blob_name):
     except Exception as e:
         st.error(f"Error downloading blob '{blob_name}': {e}")
         return None
-    
-
-
-    
+        
 
 def get_search_index_client():
     if not AZURE_SEARCH_ENDPOINT or not AZURE_SEARCH_KEY:
@@ -312,55 +310,6 @@ def keyword_search(query, chunks):
 
 import re
 
-def generate_answer(query, results):
-    if not results:
-        return "I could not find an answer in the document."
-
-    top_chunks = []
-    for _, chunk in results[:3]:
-        top_chunks.append(chunk["content"])
-
-    context = "\n\n".join(top_chunks)
-
-    prompt = f"""
-You are a helpful AI assistant answering questions about uploaded documents.
-
-Use the provided context as your primary source of truth.
-
-Instructions:
-- Answer clearly and naturally.
-- Give a complete answer, not just a definition if more context is available.
-- Keep it concise (2–3 sentences max).
-- You may rephrase and lightly expand on the context to improve clarity.
-- Do not introduce facts that are not supported by the context.
-- Do not mention "the context" or "the document".
-- If the answer cannot be reasonably inferred from the provided text, say exactly:
-"I could not find the answer in the provided documents."
-
-Context:
-{context}
-
-Question:
-{query}
-"""
-
-    try:
-        response = client.responses.create(
-            model=OPENAI_MODEL,
-            input=prompt,
-            temperature=0.2
-        )
-
-        answer = response.output_text.strip()
-
-        if not answer:
-            return "I could not generate an answer."
-
-        return f"{answer}\n\n_Source: {results[0][1]['source_file']}_"
-
-    except Exception as e:
-        return f"OpenAI error: {e}"
-    
 
 def process_pdfs(pages_to_process=None, pages_param=None, selected_files=None):
     cache = load_ingestion_cache()
